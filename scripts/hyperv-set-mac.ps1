@@ -12,7 +12,7 @@ try {
   Write-Host "  IsAdmin: " $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
   
   $vmadapter = Get-VMNetworkAdapter -VMName $VmName   
-  Set-VMNetworkAdapter -VMNetworkAdapter $vmadapter[1] -StaticMacAddress $MAC
+  Set-VMNetworkAdapter -VMNetworkAdapter $vmadapter[0] -StaticMacAddress $MAC
   
   Write-Host "Configuration of MAC Address finished"
 }

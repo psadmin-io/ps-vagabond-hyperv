@@ -53,9 +53,8 @@ MEMORY='8192'
 # Uncomment and modify the following to use bridged networking.  This is useful
 # if you wish to connect to the PUM from another host.
 NETWORK_SETTINGS = {
-  :type => "bridged",
-  :gateway => "10.10.10.1",
-  # :mac => "5CA1AB1E0001",
+  :gateway => "172.31.232.129",
+  # :mac => "00-15-5d-1f-7c-3a",
   :network => "External Network"
 }
 

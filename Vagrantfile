@@ -137,7 +137,7 @@ SCRIPT
       # The following is necessary when using the bridged network adapter
       # with Linux in order to make the machine available from other networks.
       vmconfig.vm.provision "shell",
-        run: "always",
+        run: "once",
         inline: "nmcli connection modify \"System eth0\" ipv4.never-default yes &&  nmcli connection modify \"System eth0\" ipv4.addresses $(hostname -I) && nmcli connection modify \"System eth0\" ipv4.gateway #{NETWORK_SETTINGS[:gateway]} && nmcli networking off && nmcli networking on" 
     else
       raise Vagrant::Errors::VagrantError.new, "Operating System #{OPERATING_SYSTEM} is not supported"
