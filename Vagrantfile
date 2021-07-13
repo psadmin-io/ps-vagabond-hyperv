@@ -100,7 +100,7 @@ echo ####### Extending volume group ########
 echo -e "o\nn\np\n1\n\n\nw" | fdisk /dev/sdb > /dev/null 2>&1
 pvcreate /dev/sdb1 > /dev/null 2>&1
 vgextend ol_oracle7 /dev/sdb1 > /dev/null 2>&1
-lvcreate --name ps -l +100%FREE ol_oracle7 > /dev/null 2>&1
+lvcreate --name ps -L 120G ol_oracle7 > /dev/null 2>&1
 mkfs.xfs /dev/ol_oracle7/ps > /dev/null 2>&1
 mkdir -p /opt/oracle > /dev/null 2>&1
 mount /dev/ol_oracle7/ps /opt/oracle > /dev/null 2>&1

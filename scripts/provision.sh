@@ -306,13 +306,7 @@ function determine_puppet_home() {
     "55" )
         PUPPET_HOME="/etc/puppet"
       ;;
-    "56" )
-        PUPPET_HOME="${PSFT_BASE_DIR}/dpk/puppet"
-      ;;
-    "57" )
-        PUPPET_HOME="${PSFT_BASE_DIR}/dpk/puppet"
-      ;;
-    "58" )
+    "56" | "57" | "58" | "59" )
         PUPPET_HOME="${PSFT_BASE_DIR}/dpk/puppet"
       ;;
     * )
@@ -377,31 +371,7 @@ function execute_puppet_apply() {
           sudo puppet apply "${PUPPET_HOME}/manifests/site.pp" > /dev/null 2>&1
         fi
       ;;
-    "56" )
-        if [[ -n ${DEBUG+x} ]]; then
-          sudo puppet apply \
-            --confdir="${PSFT_BASE_DIR}/dpk/puppet" \
-            --verbose \
-            "${PUPPET_HOME}/production/manifests/site.pp"
-        else
-          sudo puppet apply \
-            --confdir="${PSFT_BASE_DIR}/dpk/puppet" \
-            "${PUPPET_HOME}/production/manifests/site.pp" > /dev/null 2>&1
-        fi
-      ;;
-      "57" )
-        if [[ -n ${DEBUG+x} ]]; then
-          sudo puppet apply \
-            --confdir="${PSFT_BASE_DIR}/dpk/puppet" \
-            --verbose \
-            "${PUPPET_HOME}/production/manifests/site.pp"
-        else
-          sudo puppet apply \
-            --confdir="${PSFT_BASE_DIR}/dpk/puppet" \
-            "${PUPPET_HOME}/production/manifests/site.pp" > /dev/null 2>&1
-        fi
-      ;;
-      "58" )
+    "56" | "57" | "58" | "59" )
         if [[ -n ${DEBUG+x} ]]; then
           sudo puppet apply \
             --confdir="${PSFT_BASE_DIR}/dpk/puppet" \
@@ -476,39 +446,7 @@ function execute_psft_dpk_setup() {
           execute_puppet_apply
         fi
       ;;
-    "56" )
-        generate_response_file
-        if [[ -n ${DEBUG+x} ]]; then
-          sudo "${DPK_INSTALL}/setup/psft-dpk-setup.sh" \
-            --dpk_src_dir="${DPK_INSTALL}" \
-            --customization_file="${CUSTOMIZATION_FILE}" \
-            --silent \
-            --response_file "${DPK_INSTALL}/response.cfg"
-        else
-          sudo "${DPK_INSTALL}/setup/psft-dpk-setup.sh" \
-            --dpk_src_dir="${DPK_INSTALL}" \
-            --customization_file="${CUSTOMIZATION_FILE}" \
-            --silent \
-            --response_file "${DPK_INSTALL}/response.cfg" > /dev/null 2>&1
-        fi
-      ;;
-      "57" )
-        generate_response_file
-        if [[ -n ${DEBUG+x} ]]; then
-          sudo "${DPK_INSTALL}/setup/psft-dpk-setup.sh" \
-            --dpk_src_dir="${DPK_INSTALL}" \
-            --customization_file="${CUSTOMIZATION_FILE}" \
-            --silent \
-            --response_file "${DPK_INSTALL}/response.cfg"
-        else
-          sudo "${DPK_INSTALL}/setup/psft-dpk-setup.sh" \
-            --dpk_src_dir="${DPK_INSTALL}" \
-            --customization_file="${CUSTOMIZATION_FILE}" \
-            --silent \
-            --response_file "${DPK_INSTALL}/response.cfg" > /dev/null 2>&1
-        fi
-      ;;
-      "58" )
+    "56" | "57" | "58" | "59" )
         generate_response_file
         if [[ -n ${DEBUG+x} ]]; then
           sudo "${DPK_INSTALL}/setup/psft-dpk-setup.sh" \
@@ -546,7 +484,7 @@ function fix_init_script() {
       sudo systemctl daemon-reload
       ;;
     * )
-      # 8.58 moved to systemd
+      # 8.58+ moved to systemd
       ;;
   esac
 }

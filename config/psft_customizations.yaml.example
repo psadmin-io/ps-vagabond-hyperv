@@ -14,9 +14,6 @@ db_name:           PSFTDB
 db_name_downcase:  psftdb
 db_port:           1522
 
-psft_db:
-  location:        "%{hiera('psft_db_location')}"
-  # container_name:  CDBELM   # can specify or it will be built using CDB+type
 db_user:           PS   # NOTE: change this to VP1 for IH and FSCM
 db_user_pwd:       PS   # NOTE: change this to VP1 for IH and FSCM
 
