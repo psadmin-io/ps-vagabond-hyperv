@@ -540,10 +540,14 @@ function open_firewall_ports(){
   if [[ -n ${DEBUG+x} ]]; then
     sudo firewall-cmd --permanent --add-port=8000/tcp
     sudo firewall-cmd --permanent --add-port=1522/tcp
+    sudo firewall-cmd --permanent --add-port=137-139/tcp #samba
+    sudo firewall-cmd --permanent --add-port=445/tcp #samba/ad
     sudo firewall-cmd --reload
   else
     sudo firewall-cmd --permanent --add-port=8000/tcp > /dev/null 2>&1
     sudo firewall-cmd --permanent --add-port=1522/tcp > /dev/null 2>&1
+    sudo firewall-cmd --permanent --add-port=137-139/tcp > /dev/null 2>&1
+    sudo firewall-cmd --permanent --add-port=445/tcp > /dev/null 2>&1
     sudo firewall-cmd --reload > /dev/null 2>&1
   fi
 
@@ -595,6 +599,7 @@ echobanner
 # Prerequisites
 echomotd
 install_prereqs
+open_firewall_ports
 
 # Downloading and unpacking patch files
 download_patch_files
@@ -611,7 +616,6 @@ execute_psft_dpk_setup
 # Postrequisite fixes
 fix_init_script
 install_psadmin_plus
-open_firewall_ports
 
 # Summary information
 display_timings_summary
