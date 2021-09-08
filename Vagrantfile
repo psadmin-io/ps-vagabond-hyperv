@@ -105,6 +105,7 @@ mkfs.xfs /dev/ol_oracle7/ps > /dev/null 2>&1
 mkdir -p /opt/oracle > /dev/null 2>&1
 mount /dev/ol_oracle7/ps /opt/oracle > /dev/null 2>&1
 echo "/dev/mapper/ol_oracle7-ps     /opt/oracle                   xfs     defaults        0 0" | tee -a /etc/fstab > /dev/null 2>&1
+df -hT
 SCRIPT
 
       vmconfig.vm.provision "storage", type: "shell", run: "once", inline: $extend
@@ -136,7 +137,8 @@ SCRIPT
         # ip: "#{NETWORK_SETTINGS[:ip_address]}", mac: "#{NETWORK_SETTINGS[:mac]}"
       # The following is necessary when using the bridged network adapter
       # with Linux in order to make the machine available from other networks.
-      vmconfig.vm.provision "shell",
+      vmconfig.vm.provision "networking", 
+        type: "shell",
         run: "once",
         inline: "nmcli connection modify \"System eth0\" ipv4.never-default yes &&  nmcli connection modify \"System eth0\" ipv4.addresses $(hostname -I) && nmcli connection modify \"System eth0\" ipv4.gateway #{NETWORK_SETTINGS[:gateway]} && nmcli networking off && nmcli networking on" 
     else
