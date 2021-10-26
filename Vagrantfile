@@ -19,6 +19,9 @@ if needs_restart
   exec "vagrant #{ARGV.join' '}"
 end
 
+if USERNAME.nil? || USERNAME.empty?
+  raise Vagrant::Errors::VagrantError.new, "You must set the $env:OS_USERNAME environment variable"
+end
 if PASSWORD.nil? || PASSWORD.empty?
   raise Vagrant::Errors::VagrantError.new, "You must set the $env:OS_PASSWORD environment variable"
 end

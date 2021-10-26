@@ -25,7 +25,7 @@
 # You must set the OS_PASSWORD env var
 # If you are using the current account, you can default DOMAIN and USERNAME
 DOMAIN = ENV['USERDOMAIN']
-USERNAME = ENV['USERNAME']
+USERNAME = ENV['OS_USERNAME']
 PASSWORD = ENV['OS_PASSWORD']
 
 # PATCH ID
