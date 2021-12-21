@@ -42,7 +42,7 @@ readonly CUSTOMIZATION_FILE="/vagrant/config/psft_customizations.yaml"
 readonly PSFT_CFG_DIR="${PSFT_CFG_DIR}"
 # readonly EXTRAS_URL="https://packagecloud.io/install/repositories/jrbing/ps-extras/script.rpm.sh"
 
-declare -a additional_packages=("glibc-devel" "oracle-epel-release-el7" "vim-enhanced" "htop" "jq" "python-pip" "PyYAML" "python-requests" "unzip" "samba" "samba-client" "aria2" "policycoreutils-python" "attr")
+declare -a additional_packages=("glibc-devel" "oracle-epel-release-el7" "vim-enhanced" "htop" "jq" "python-pip" "PyYAML" "python-requests" "unzip" "samba" "samba-client" "aria2" "policycoreutils-python" "attr" "git")
 declare -A timings
 
 ###############
@@ -515,13 +515,19 @@ function install_psadmin_plus(){
       ;;
     "59" )
       if [[ -n ${DEBUG+x} ]]; then
-        curl --insecure https://rubygems.org/downloads/psadmin_plus-2.0.5.gem -o psadmin_plus.gem
-        sudo $PSFT_BASE_DIR/psft_puppet_agent/bin/gem install --local psadmin_plus.gem
+        cd ~
+        git clone https://github.com/psadmin-io/psadmin-plus.git
+        cd psadmin-plus
+        export PATH=$PATH:~/psadmin-plus/bin:/opt/oracle/psft/psft_puppet_agent/bin
+        echo "export PATH=\$PATH:~/psadmin-plus/bin" | tee -a ~/.bash_profile
       else 
-        curl --insecure https://rubygems.org/downloads/psadmin_plus-2.0.5.gem -o psadmin_plus.gem > /dev/null 2>&1
-        sudo $PSFT_BASE_DIR/psft_puppet_agent/bin/gem install --local psadmin_plus.gem > /dev/null 2>&1
+        cd ~
+        git clone https://github.com/psadmin-io/psadmin-plus.git > /dev/null 2>&1
+        cd psadmin-plus 
+        export PATH=$PATH:~/psadmin-plus/bin:/opt/oracle/psft/psft_puppet_agent/bin
+        echo "export PATH=\$PATH:~/psadmin-plus/bin" | tee -a ~/.bash_profile > /dev/null 2>&1
       fi
-      echo "PATH=$PATH:$PSFT_BASE_DIR/psft_puppet_agent/bin" | tee -a ~/.bash_profile > /dev/null 2>&1
+      echo "PATH=\$PATH:$PSFT_BASE_DIR/psft_puppet_agent/bin" | tee -a ~/.bash_profile > /dev/null 2>&1
       ;;
     * )
       echo "Tools Version not supported"
