@@ -9,6 +9,7 @@ ps_config_home:         "%{hiera('peoplesoft_base')}/cfg"
 #jdk_location:           "%{hiera('pt_location')}/jdk"
 #weblogic_location:      "%{hiera('pt_location')}/wls"
 #tuxedo_location:        "%{hiera('pt_location')}/tux"
+pi_home_location:       "/vagrant/pi_home"
 
 db_name:           PSFTDB
 db_name_downcase:  psftdb
