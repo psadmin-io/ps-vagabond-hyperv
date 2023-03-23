@@ -17,3 +17,6 @@ NOTES.md
 # Hyper-V Drives
 *.vhdx
 *.avhdx
+
+# PI_HOME
+pi_home/**
