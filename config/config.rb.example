@@ -53,9 +53,11 @@ MEMORY='8192'
 # Uncomment and modify the following to use bridged networking.  This is useful
 # if you wish to connect to the PUM from another host.
 NETWORK_SETTINGS = {
-  :gateway => "172.31.232.129",
-  # :mac => "00-15-5d-1f-7c-3a",
-  :network => "External Network"
+  :ip_address => "10.0.1.199",
+  :gateway    => "10.0.1.1",
+  # :mac        => "00-15-5d-1f-7c-3a",
+  :network    => "External Network",
+  :domain     => "psadmin.local" 
 }
 
 # DPK_LOCAL_DIR
@@ -94,8 +96,9 @@ DPK_LOCAL_DIR = "dpks/download" unless defined? DPK_LOCAL_DIR
 #       installation directory) is mounted under "/media/sf_*".
 DPK_REMOTE_DIR_LNX = "/media/sf_#{DPK_VERSION}" unless defined? DPK_REMOTE_DIR
 DPK_REMOTE_DIR_WIN = "C:/psft/dpks/download/#{DPK_VERSION}" unless defined? DPK_REMOTE_DIR
-NETWORK_SETTINGS = { :type => "hostonly", :host_http_port => "8000", :guest_http_port => "8000", :host_listener_port => "1522", :guest_listener_port => "1522", :host_rdp_port => "33389", :guest_rdp_port => "3389", :host_es_port => "9200", :guest_es_port => "9200", :host_kb_port => "5601", :guest_kb_port => "5601"} unless defined? NETWORK_SETTINGS
-PSFT_CFG_DIR = "/opt/oracle/psft/cfg" unless defined? PSFT_CFG_DIR
+NETWORK_SETTINGS = { :type => "hostonly", :domain => "psadmin.local", :host_http_port => "8000", :guest_http_port => "8000", :host_listener_port1 => "1521", :guest_listener_port1 => "1521", :host_listener_port2 => "1522", :guest_listener_port2 => "1522", :host_rdp_port => "33389", :guest_rdp_port => "3389", :host_es_port => "9200", :guest_es_port => "9200", :host_kb_port => "5601", :guest_kb_port => "5601"} unless defined? NETWORK_SETTINGS
+PSFT_BASE_DIR = "/opt/oracle/psft"
+PSFT_CFG_DIR = "#{PSFT_BASE_DIR}/cfg" unless defined? PSFT_CFG_DIR
 
 DPK_BOOTSTRAP = 'true' unless defined? DPK_BOOTSTRAP
 PUPPET_APPLY = 'true' unless defined? PUPPET_APPLY
@@ -104,13 +107,13 @@ CA_SETTINGS = { :setup => false, :path => '', :type => '', :backup => '' } unles
 PTF_SETUP = 'false' unless defined? PTF_SETUP
 APPLY_PT_PATCH = 'false' unless defined? APPLY_PT_PATCH
 DPK_ROLE = '' unless defined? DPK_ROLE
-IE_HOMEPAGE = 'http://localhost:8000/ps/signon.html' unless defined? IE_HOMEPAGE
+IE_HOMEPAGE = 'http://psadmin.psvagabond.local:8000/ps/signon.html' unless defined? IE_HOMEPAGE
 
 if OPERATING_SYSTEM.upcase == "WINDOWS"
   PUPPET_HOME = "C:/ProgramData/PuppetLabs/puppet/etc" unless defined? PUPPET_HOME
   PSFT_BASE_DIR = "c:/psft" unless defined? PSFT_BASE_DIR
 elsif OPERATING_SYSTEM == "LINUX"
-  PUPPET_HOME = "/etc/puppet" unless defined? PUPPET_HOME
+  PUPPET_HOME = "#{PSFT_BASE_DIR}/psft_puppet_agent" unless defined? PUPPET_HOME
 else
   raise Vagrant::Errors::VagrantError.new, "Operating System #{OPERATING_SYSTEM} is not supported"
 end

@@ -44,8 +44,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Increase the timeout limit for halting the VM
     vmconfig.vm.graceful_halt_timeout = 600
 
-    # Automatically download the latest version of whatever box we're using
-    vmconfig.vm.box_check_update = true
+    # Only download new boxes when the Vagabond picks a new release
+    vmconfig.vm.box_check_update = false
 
     ##############
     #  Provider  #
@@ -95,20 +95,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         trigger.run = { inline: "./scripts/hyperv-add-storage.ps1 -VmName #{DPK_VERSION} -StoragePath #{VAGRANT_HOME}"}
       end
 
-      # Extend volume group for PeopleSoft
-      # for the generic/oracle7 box, use the "ol_oracle7" volume group
-      # the bento/ol7 box uses "ol" for the volume group
+      # extend volume group to for PeopleSoft
       $extend = <<-SCRIPT
-echo ####### Extending volume group ########
+echo 'Extending Volume Group'
 echo -e "o\nn\np\n1\n\n\nw" | fdisk /dev/sdb > /dev/null 2>&1
 pvcreate /dev/sdb1 > /dev/null 2>&1
-vgextend ol_oracle7 /dev/sdb1 > /dev/null 2>&1
-lvcreate --name ps -L 120G ol_oracle7 > /dev/null 2>&1
-mkfs.xfs /dev/ol_oracle7/ps > /dev/null 2>&1
+vgextend ol_oracle8 /dev/sdb1 > /dev/null 2>&1
+lvcreate --name ps -l +100%FREE ol_oracle8 > /dev/null 2>&1
+mkfs.xfs /dev/ol_oracle8/ps > /dev/null 2>&1
 mkdir -p /opt/oracle > /dev/null 2>&1
-mount /dev/ol_oracle7/ps /opt/oracle > /dev/null 2>&1
-echo "/dev/mapper/ol_oracle7-ps     /opt/oracle                   xfs     defaults        0 0" | tee -a /etc/fstab > /dev/null 2>&1
-df -hT
+mount /dev/ol_oracle8/ps /opt/oracle > /dev/null 2>&1
+echo "/dev/ol_oracle8/ps     /opt/oracle                   xfs     defaults        0 0" | tee -a /etc/fstab > /dev/null 2>&1
+echo "PeopleSoft Mount: $(df -hT | grep /opt/oracle)"
 SCRIPT
 
       vmconfig.vm.provision "storage", type: "shell", run: "once", inline: $extend
@@ -136,14 +134,17 @@ SCRIPT
 
     case OPERATING_SYSTEM.upcase
     when "LINUX"
-      vmconfig.vm.network "public_network", bridge: "#{NETWORK_SETTINGS[:network]}"
-        # ip: "#{NETWORK_SETTINGS[:ip_address]}", mac: "#{NETWORK_SETTINGS[:mac]}"
-      # The following is necessary when using the bridged network adapter
-      # with Linux in order to make the machine available from other networks.
-      vmconfig.vm.provision "networking", 
-        type: "shell",
-        run: "once",
-        inline: "nmcli connection modify \"System eth0\" ipv4.never-default yes &&  nmcli connection modify \"System eth0\" ipv4.addresses $(hostname -I) && nmcli connection modify \"System eth0\" ipv4.gateway #{NETWORK_SETTINGS[:gateway]} && nmcli networking off && nmcli networking on" 
+        vmconfig.vm.network "public_network", ip: "#{NETWORK_SETTINGS[:ip_address]}"
+        vmconfig.vm.provision "networking_setup", type: "shell", run: "once" do |script|
+          script.path = "scripts/networking.sh"
+          script.upload_path = "/tmp/networking.sh"
+          script.env = {
+            "IP_ADDRESS"       => "#{NETWORK_SETTINGS[:ip_address]}",
+            "DOMAIN"           => "#{NETWORK_SETTINGS[:domain]}",
+            "GATEWAY"          => "#{NETWORK_SETTINGS[:gateway]}",
+            "NETWORK_SETTINGS" => "#{NETWORK_SETTINGS[:type]}"
+          }
+        end
     else
       raise Vagrant::Errors::VagrantError.new, "Operating System #{OPERATING_SYSTEM} is not supported"
     end
@@ -154,6 +155,8 @@ SCRIPT
 
     case OPERATING_SYSTEM.upcase 
     when "LINUX"
+
+      
 
       vmconfig.vm.provision "bootstrap-lnx", type: "shell" do |script|
         script.path = "scripts/provision.sh"
